@@ -7,6 +7,7 @@ library(ggpubr)
 library(viridis)
 library(hrbrthemes)
 library(lme4)
+library(rsq)
 fig_width=730
 fig_height=900
 curr_directory = getwd()
@@ -123,9 +124,9 @@ anova(age_pe_site_pc2_gender_race_pc1_ecbcl_model,age_pe_site_pc2_gender_race_pc
 age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl + ethnicity+wisc,motion_data_fit_clean)
 anova(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_model,age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)
 #determine proportion of variance explained by metric -- add univariate as well to this
-effect_array = array(data = NA,dim = 20)
-effect_name = c("wisc","ethnicity","ecbcl","pc1","race","gender","pc2","site","parent education","age","wisc","ethnicity","ecbcl","pc1","race","gender","pc2","site","parent education","age")
-effect_model = rep(c("full","univariate"),1,each=10)
+effect_array = array(data = NA,dim = 30)
+effect_name = rep(c("wisc","ethnicity","ecbcl","pc1","race","gender","pc2","site","parent education","age"),3)
+effect_model = rep(c("full","partial","univariate"),1,each=10)
 effect_array[1] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_model)$r.squared
 age_pe_site_pc2_gender_race_pc1_ecbcl_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + race + pc1 + Ecbcl + wisc,motion_data_fit_clean)
 effect_array[2] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_wisc_model)$r.squared
@@ -145,29 +146,44 @@ age_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + site + p
 effect_array[9] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
 pe_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ parent_education + site + pc2 + gender + race + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
 effect_array[10] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(pe_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
+#calculate partial r squared traditional way
+rsq_partial_model = rsq.partial(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)
+
+effect_array[11] = unlist(rsq_partial_model$partial.rsq)[10]
+effect_array[12] = unlist(rsq_partial_model$partial.rsq)[9]
+effect_array[13] = unlist(rsq_partial_model$partial.rsq)[8]
+effect_array[14] = unlist(rsq_partial_model$partial.rsq)[7]
+effect_array[15] = unlist(rsq_partial_model$partial.rsq)[6]
+effect_array[16] = unlist(rsq_partial_model$partial.rsq)[5]
+effect_array[17] = unlist(rsq_partial_model$partial.rsq)[4]
+effect_array[18] = unlist(rsq_partial_model$partial.rsq)[3]
+effect_array[19] = unlist(rsq_partial_model$partial.rsq)[2]
+effect_array[20] = unlist(rsq_partial_model$partial.rsq)[1]
 
 #redo univariate calculations and store them
 univariate_effect_array = array(data = NA,dim = 10)
 temp_model <- lm(meanFD ~ wisc,motion_data_fit_clean)
-effect_array[11] = summary(temp_model)$r.squared
+effect_array[21] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ ethnicity,motion_data_fit_clean)
-effect_array[12] = summary(temp_model)$r.squared
+effect_array[22] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ Ecbl,motion_data_fit_clean)
-effect_array[13] = summary(temp_model)$r.squared
+effect_array[23] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ pc1,motion_data_fit_clean)
-effect_array[14] = summary(temp_model)$r.squared
+effect_array[24] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ race,motion_data_fit_clean)
-effect_array[15] = summary(temp_model)$r.squared
+effect_array[25] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ gender,motion_data_fit_clean)
-effect_array[16] = summary(temp_model)$r.squared
+effect_array[26] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ pc2,motion_data_fit_clean)
-effect_array[17] = summary(temp_model)$r.squared
+effect_array[27] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ site,motion_data_fit_clean)
-effect_array[18] = summary(temp_model)$r.squared
+effect_array[28] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ parent_education,motion_data_fit_clean)
-effect_array[19] = summary(temp_model)$r.squared
+effect_array[29] = summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ age,motion_data_fit_clean)
-effect_array[20] = summary(temp_model)$r.squared
+effect_array[30] = summary(temp_model)$r.squared
+
+
 
 effsize_table <- data.frame(rsquared = effect_array,measure = effect_name,type = effect_model)
 #make bubble plots
@@ -181,7 +197,7 @@ bubble_plot_legend_text_size <- bubble_plot_base_text_size + 32
 bubble_plot_legend_title_size <- bubble_plot_base_text_size + 34
 sqrd <- scales::trans_new("sqrd",function(x){x^2},sqrt)
 effsizepp <- ggplot(data = effsize_table)+aes(x=type,y=measure,size=rsquared,color=effect_name) + 
-  geom_point(alpha=0.7) + geom_point(shape=1,colour="grey",trans="log10") + 
+  geom_point(alpha=0.7) + geom_point(shape=1,colour="grey") + 
   scale_size(range = c(1.4,19),name="ratio") +
   theme_classic2() +
   scale_y_discrete(name = "variable") +
