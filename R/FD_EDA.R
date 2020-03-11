@@ -73,7 +73,16 @@ motion_data_fit_no_pe_unknown <- motion_data_fit_nonan[motion_data_fit_nonan$par
 motion_data_fit_no_pe_race <- motion_data_fit_no_pe_unknown[motion_data_fit_no_pe_unknown$race != 777,]
 motion_data_fit_noeth999 <- motion_data_fit_no_pe_race[motion_data_fit_no_pe_race$ethnicity != 777,]
 motion_data_fit_clean <- motion_data_fit_noeth999[motion_data_fit_noeth999$ethnicity != 999,]
-# Below models show no effect of most factors
+#Below shows the model where all combined values show a significant effect (P < 0.05)
+age_model <- lm(meanFD ~ age,motion_data_fit_clean)
+age_pe_model <- lm(meanFD ~ age + parent_education,motion_data_fit_clean)
+age_pe_site_model <- lm(meanFD ~ age + parent_education + site,motion_data_fit_clean)
+age_pe_site_gender_model <- lm(meanFD ~ age + parent_education + site + gender,motion_data_fit_clean)
+age_pe_site_gender_pc1_model <- lm(meanFD ~ age + parent_education + site + gender + pc1,motion_data_fit_clean)
+age_pe_site_gender_pc1_pc2_model <- lm(meanFD ~ age + parent_education + site + gender + pc1 + pc2,motion_data_fit_clean)
+age_pe_site_gender_pc1_pc2_siteXpc1_model <- lm(meanFD ~ age + parent_education + site + gender + pc1 + pc2 + pc1*site,motion_data_fit_clean)
+
+# Below models show small effect of most factors
 temp_model <- lm(meanFD ~ age,motion_data_fit_clean)
 summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ gender,motion_data_fit_clean)
@@ -92,9 +101,9 @@ temp_model <- lm(meanFD ~ pc2,motion_data_fit_clean)
 summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ pc3,motion_data_fit_clean)
 summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ Ecbl,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ Ecbcl,motion_data_fit_clean)
 summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ Icbl,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ Icbcl,motion_data_fit_clean)
 summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ wisc,motion_data_fit_clean)
 summary(temp_model)$r.squared
@@ -104,7 +113,7 @@ temp_model <- lm(meanFD ~ hour,motion_data_fit_clean)
 summary(temp_model)$r.squared
 temp_model <- lm(meanFD ~ span,motion_data_fit_clean)
 summary(temp_model)$r.squared
-#omnibus anova shows 10 initial factors may contribute
+#omnibus anova shows 11 initial factors may contribute
 omnibus_meanFD <- lm(meanFD ~ age+parent_education+race+site+pc1+pc2+pc3+gender+Ecbcl+Icbcl+ethnicity+wisc+month+hour+span,motion_data_fit_clean)
 anova(omnibus_meanFD)
 age_pe_site_pc2_model <- lm(meanFD ~ age +parent_education +site +pc2,motion_data_fit_clean)
@@ -117,78 +126,80 @@ age_pe_site_pc2_gender_race_pc1_model <- lm(meanFD ~ age +parent_education +site
 anova(age_pe_site_pc2_gender_race_model,age_pe_site_pc2_gender_race_pc1_model)
 age_pe_site_pc2_gender_race_pc1_ecbcl_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl,motion_data_fit_clean)
 anova(age_pe_site_pc2_gender_race_pc1_model,age_pe_site_pc2_gender_race_pc1_ecbcl_model)
-age_pe_site_pc2_gender_race_pc1_ecbcl_icbcl_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl + Icbcl,motion_data_fit_clean)
-anova(age_pe_site_pc2_gender_race_pc1_ecbcl_model,age_pe_site_pc2_gender_race_pc1_ecbcl_icbcl_model)
-age_pe_site_pc2_gender_race_pc1_ecbcl_enth_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl + ethnicity,motion_data_fit_clean)
-anova(age_pe_site_pc2_gender_race_pc1_ecbcl_model,age_pe_site_pc2_gender_race_pc1_ecbcl_enth_model)
-age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl + ethnicity+wisc,motion_data_fit_clean)
-anova(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_model,age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)
+age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_model <- lm(meanFD ~  age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl + pc3,motion_data_fit_clean)
+anova(age_pe_site_pc2_gender_race_pc1_ecbcl_model,age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_model)
+age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_icbcl_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl + pc3 + Icbcl,motion_data_fit_clean)
+anova(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_model,age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_icbcl_model)
+age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl+ pc3 + ethnicity,motion_data_fit_clean)
+anova(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_model,age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_model)
+age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model <- lm(meanFD ~ age +parent_education +site +pc2 + gender + race + pc1 + Ecbcl+ pc3  + ethnicity+wisc,motion_data_fit_clean)
+anova(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_model,age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)
 #determine proportion of variance explained by metric -- add univariate as well to this
-effect_array = array(data = NA,dim = 30)
-effect_name = rep(c("wisc","ethnicity","ecbcl","pc1","race","gender","pc2","site","parent education","age"),3)
-effect_model = rep(c("full","partial","univariate"),1,each=10)
-effect_array[1] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_model)$r.squared
-age_pe_site_pc2_gender_race_pc1_ecbcl_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + race + pc1 + Ecbcl + wisc,motion_data_fit_clean)
-effect_array[2] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_wisc_model)$r.squared
-age_pe_site_pc2_gender_race_pc1_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + race + pc1 + ethnicity+wisc,motion_data_fit_clean)
-effect_array[3] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ethn_wisc_model)$r.squared
-age_pe_site_pc2_gender_race_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site + pc2 + gender + race + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[4] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_ecbcl_ethn_wisc_model)$r.squared
-age_pe_site_pc2_gender_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[5] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_pc1_ecbcl_ethn_wisc_model)$r.squared
-age_pe_site_pc2_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + parent_education + site + pc2 + race + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[6] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_race_pc1_ecbcl_ethn_wisc_model)$r.squared
-age_pe_site_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + parent_education + site + gender + race + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[7] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_site_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
-age_pe_pc2_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + parent_education + pc2 + gender + race + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[8] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_pe_pc2_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
-age_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + site + pc2 + gender + race + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[9] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(age_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
-pe_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ parent_education + site + pc2 + gender + race + pc1 + Ecbcl + ethnicity + wisc,motion_data_fit_clean)
-effect_array[10] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)$r.squared - summary(pe_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
-#calculate partial r squared traditional way
-rsq_partial_model = rsq.partial(age_pe_site_pc2_gender_race_pc1_ecbcl_enth_wisc_model)
-
-effect_array[11] = unlist(rsq_partial_model$partial.rsq)[10]
-effect_array[12] = unlist(rsq_partial_model$partial.rsq)[9]
-effect_array[13] = unlist(rsq_partial_model$partial.rsq)[8]
-effect_array[14] = unlist(rsq_partial_model$partial.rsq)[7]
-effect_array[15] = unlist(rsq_partial_model$partial.rsq)[6]
-effect_array[16] = unlist(rsq_partial_model$partial.rsq)[5]
-effect_array[17] = unlist(rsq_partial_model$partial.rsq)[4]
-effect_array[18] = unlist(rsq_partial_model$partial.rsq)[3]
-effect_array[19] = unlist(rsq_partial_model$partial.rsq)[2]
-effect_array[20] = unlist(rsq_partial_model$partial.rsq)[1]
-
+effect_array = array(data = NA,dim = 33)
+effect_name = c("wisc","ethnicity","pc3","ecbcl","pc1","race","gender","pc2","site","parent education","age","wisc","ethnicity","pc3","ecbcl","pc1","race","gender","pc2","site","parent education","age","wisc","ethnicity","pc3","ecbcl","pc1","race","gender","pc2","site","parent education","age")
+effect_model = rep(c("excluded","partial","univariate"),1,each=11)
+effect_array[1] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_model)$r.squared
+age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + race + pc1 + Ecbcl + pc3  + wisc,motion_data_fit_clean)
+effect_array[2] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_wisc_model)$r.squared
+age_pe_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + race + pc1 + Ecbcl + ethnicity+wisc,motion_data_fit_clean)
+effect_array[3] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_ecbcl_ethn_wisc_model)$r.squared
+age_pe_site_pc2_gender_race_pc1_pc3_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + race + pc1 + pc3 + ethnicity+wisc,motion_data_fit_clean)
+effect_array[4] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_pc1_pc3_ethn_wisc_model)$r.squared
+age_pe_site_pc2_gender_race_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site + pc2 + gender + race + Ecbcl + pc3 + ethnicity + wisc,motion_data_fit_clean)
+effect_array[5] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_race_ecbcl_pc3_ethn_wisc_model)$r.squared
+age_pe_site_pc2_gender_pc1_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ age + parent_education +site +pc2 + gender + pc1 + Ecbcl + pc3  + ethnicity + wisc,motion_data_fit_clean)
+effect_array[6] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_gender_pc1_ecbcl_pc3_ethn_wisc_model)$r.squared
+age_pe_site_pc2_race_pc1_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ age + parent_education + site + pc2 + race + pc1 + Ecbcl + pc3  + ethnicity + wisc,motion_data_fit_clean)
+effect_array[7] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_pc2_race_pc1_ecbcl_pc3_ethn_wisc_model)$r.squared
+age_pe_site_gender_race_pc1_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ age + parent_education + site + gender + race + pc1 + Ecbcl + pc3  + ethnicity + wisc,motion_data_fit_clean)
+effect_array[8] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_site_gender_race_pc1_ecbcl_pc3_ethn_wisc_model)$r.squared
+age_pe_pc2_gender_race_pc1_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ age + parent_education + pc2 + gender + race + pc1 + Ecbcl + pc3  + ethnicity + wisc,motion_data_fit_clean)
+effect_array[9] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_pe_pc2_gender_race_pc1_ecbcl_pc3_ethn_wisc_model)$r.squared
+age_site_pc2_gender_race_pc1_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ age + site + pc2 + gender + race + pc1 + Ecbcl + pc3  + ethnicity + wisc,motion_data_fit_clean)
+effect_array[10] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(age_site_pc2_gender_race_pc1_ecbcl_pc3_ethn_wisc_model)$r.squared
+pe_site_pc2_gender_race_pc1_ecbcl_pc3_ethn_wisc_model <- lm(meanFD ~ parent_education + site + pc2 + gender + race + pc1 + Ecbcl + pc3  + ethnicity + wisc,motion_data_fit_clean)
+effect_array[11] <- summary(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)$r.squared - summary(pe_site_pc2_gender_race_pc1_ecbcl_pc3_ethn_wisc_model)$r.squared
+#calculate partial rsq and store them
+partial_rsq <- rsq.partial(age_pe_site_pc2_gender_race_pc1_ecbcl_pc3_enth_wisc_model)
+effect_array[12] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'wisc']
+effect_array[13] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'ethnicity']
+effect_array[14] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'pc3']
+effect_array[15] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'Ecbcl']
+effect_array[16] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'pc1']
+effect_array[17] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'race']
+effect_array[18] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'gender']
+effect_array[19] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'pc2']
+effect_array[20] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'site']
+effect_array[21] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'parent_education']
+effect_array[22] <- partial_rsq$partial.rsq[partial_rsq$variable %in% 'age']
 #redo univariate calculations and store them
-univariate_effect_array = array(data = NA,dim = 10)
 temp_model <- lm(meanFD ~ wisc,motion_data_fit_clean)
-effect_array[21] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ ethnicity,motion_data_fit_clean)
-effect_array[22] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ Ecbl,motion_data_fit_clean)
 effect_array[23] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ pc1,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ ethnicity,motion_data_fit_clean)
 effect_array[24] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ race,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ pc3,motion_data_fit_clean)
 effect_array[25] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ gender,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ Ecbcl,motion_data_fit_clean)
 effect_array[26] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ pc2,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ pc1,motion_data_fit_clean)
 effect_array[27] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ site,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ race,motion_data_fit_clean)
 effect_array[28] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ parent_education,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ gender,motion_data_fit_clean)
 effect_array[29] = summary(temp_model)$r.squared
-temp_model <- lm(meanFD ~ age,motion_data_fit_clean)
+temp_model <- lm(meanFD ~ pc2,motion_data_fit_clean)
 effect_array[30] = summary(temp_model)$r.squared
-
-
+temp_model <- lm(meanFD ~ site,motion_data_fit_clean)
+effect_array[31] = summary(temp_model)$r.squared
+temp_model <- lm(meanFD ~ parent_education,motion_data_fit_clean)
+effect_array[32] = summary(temp_model)$r.squared
+temp_model <- lm(meanFD ~ age,motion_data_fit_clean)
+effect_array[33] = summary(temp_model)$r.squared
 
 effsize_table <- data.frame(rsquared = effect_array,measure = effect_name,type = effect_model)
 #make bubble plots
 
-bubble_plot_base_text_size = -20
+bubble_plot_base_text_size = -14
 bubble_plot_text_x_size <- bubble_plot_base_text_size + 36
 bubble_plot_text_y_size <- bubble_plot_base_text_size + 36
 bubble_plot_title_x_size <- bubble_plot_base_text_size + 40
@@ -197,7 +208,7 @@ bubble_plot_legend_text_size <- bubble_plot_base_text_size + 32
 bubble_plot_legend_title_size <- bubble_plot_base_text_size + 34
 sqrd <- scales::trans_new("sqrd",function(x){x^2},sqrt)
 effsizepp <- ggplot(data = effsize_table)+aes(x=type,y=measure,size=rsquared,color=effect_name) + 
-  geom_point(alpha=0.7) + geom_point(shape=1,colour="grey") + 
+  geom_point(alpha=0.7) + geom_point(shape=1,colour="grey",trans="log10") + 
   scale_size(range = c(1.4,19),name="ratio") +
   theme_classic2() +
   scale_y_discrete(name = "variable") +
@@ -209,18 +220,9 @@ effsizepp <- ggplot(data = effsize_table)+aes(x=type,y=measure,size=rsquared,col
         axis.title.y = element_text(size=bubble_plot_title_y_size),
         legend.text = element_text(size=bubble_plot_legend_text_size),
         legend.title = element_text(size=bubble_plot_legend_title_size))
-png("analyses/effect_of_factors_on_meanFD.png",width=fig_width,height=fig_height)
+png("/mnt/rose/shared/projects/ABCD/motion_data_aggregations/analyses/effect_of_factors_on_meanFD.png")
 effsizepp
 dev.off()
-#Below shows the model where all combined values show a significant effect (P < 0.05)
-age_model <- lm(meanFD ~ age,motion_data_fit_clean)
-age_pe_model <- lm(meanFD ~ age + parent_education,motion_data_fit_clean)
-age_pe_site_model <- lm(meanFD ~ age + parent_education + site,motion_data_fit_clean)
-age_pe_site_gender_model <- lm(meanFD ~ age + parent_education + site + gender,motion_data_fit_clean)
-age_pe_site_gender_pc1_model <- lm(meanFD ~ age + parent_education + site + gender + pc1,motion_data_fit_clean)
-age_pe_site_gender_pc1_pc2_model <- lm(meanFD ~ age + parent_education + site + gender + pc1 + pc2,motion_data_fit_clean)
-age_pe_site_gender_pc1_pc2_siteXpc1_model <- lm(meanFD ~ age + parent_education + site + gender + pc1 + pc2 + pc1*site,motion_data_fit_clean)
-
 #Below shows the significant comparisons of each added parameter
 anova(age_model,age_pe_model)
 anova(age_pe_model,age_pe_site_model)
